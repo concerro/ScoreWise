@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Report Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a5b4fc 100%);
+        }
+        .section-title {
+            letter-spacing: -0.02em;
+        }
+        .chart-card {
+            transition: box-shadow .2s, transform .2s;
+        }
+        .chart-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(99,102,241,0.18);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .prose { color: #374151; }
+    </style>
+</head>
+<body class="hero-gradient min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-5xl mx-auto px-4 py-12">
+        <div class="glass p-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
+                <div>
+                    <h1 class="text-4xl font-extrabold section-title text-gray-900 mb-1">Your Credit Report Analysis</h1>
+                    <p class="text-lg text-gray-600">AI-powered insights, personalized for you.</p>
+                </div>
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Credit Analysis" class="w-16 md:w-24 mt-6 md:mt-0">
+            </div>
+            <!-- Credit Score and Utilization -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-white chart-card rounded-xl shadow-md p-8 flex flex-col items-center">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">Credit Score</h2>
+                    <img src="data:image/png;base64,{{ charts.credit_score }}" alt="Credit Score Chart" class="w-full rounded-lg mb-2">
+                    <p class="mt-2 text-center text-3xl font-extrabold text-indigo-600">{{ data.credit_score }}</p>
+                </div>
+                <div class="bg-white chart-card rounded-xl shadow-md p-8 flex flex-col items-center">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">Credit Utilization</h2>
+                    <img src="data:image/png;base64,{{ charts.credit_utilization }}" alt="Credit Utilization Chart" class="w-full rounded-lg mb-2">
+                    <p class="mt-2 text-center text-3xl font-extrabold text-indigo-600">{{ data.credit_utilization }}%</p>
+                </div>
+            </div>
+            <!-- Payment History and Account Types -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-white chart-card rounded-xl shadow-md p-8 flex flex-col items-center">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">Payment History</h2>
+                    <img src="data:image/png;base64,{{ charts.payment_history }}" alt="Payment History Chart" class="w-full rounded-lg mb-2">
+                    <ul class="mt-4 text-gray-700 text-lg">
+                        <li><span class="font-semibold">On Time:</span> {{ data.payment_history.on_time }}</li>
+                        <li><span class="font-semibold">Late:</span> {{ data.payment_history.late }}</li>
+                    </ul>
+                </div>
+                {% if charts.account_types %}
+                <div class="bg-white chart-card rounded-xl shadow-md p-8 flex flex-col items-center">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-700">Account Types</h2>
+                    <img src="data:image/png;base64,{{ charts.account_types }}" alt="Account Types Chart" class="w-full rounded-lg mb-2">
+                    <ul class="mt-4 text-gray-700 text-lg">
+                        {% for account_type, count in data.account_types.items() %}
+                        <li><span class="font-semibold">{{ account_type }}:</span> {{ count }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            <!-- Credit Overview -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Credit Overview</h2>
+                <ul class="list-disc pl-5 text-lg text-gray-700">
+                    <li><span class="font-semibold">Credit Score:</span> {{ data.credit_score }}</li>
+                    <li><span class="font-semibold">Credit Utilization:</span> {{ data.credit_utilization }}%</li>
+                    <li><span class="font-semibold">Average Account Age:</span> {{ data.avg_account_age }} months</li>
+                    <li><span class="font-semibold">Number of Negative Items:</span> {{ data.negative_items }}</li>
+                    <li><span class="font-semibold">Payment History:</span>
+                        <ul class="ml-4">
+                            <li>On Time Payments: {{ data.payment_history.on_time }}</li>
+                            <li>Late Payments: {{ data.payment_history.late }}</li>
+                        </ul>
+                    </li>
+                    {% if data.account_types %}
+                    <li><span class="font-semibold">Account Types:</span>
+                        <ul class="ml-4">
+                            {% for account_type, count in data.account_types.items() %}
+                            <li>{{ account_type }}: {{ count }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- Executive Summary -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Executive Summary</h2>
+                <div class="prose max-w-none text-lg">
+                    {{ data.detailed_analysis | safe }}
+                </div>
+            </div>
+            <!-- Actionable Steps -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Top 5+ Actionable Steps to Improve Your Credit</h2>
+                <ol class="list-decimal pl-5 text-lg text-gray-700 space-y-2">
+                    {% for step in data.action_steps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <!-- Negative Item Action Plans -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">How to Resolve Negative Items</h2>
+                <ul class="list-disc pl-5 text-lg text-gray-700 space-y-2">
+                    {% for plan in data.negative_item_plans %}
+                    <li>{{ plan }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- 90-Day Roadmap -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Your Personalized 90-Day Roadmap</h2>
+                <ol class="list-decimal pl-5 text-lg text-gray-700 space-y-2">
+                    {% for milestone in data.roadmap_90_days %}
+                    <li>{{ milestone }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <!-- Approval Advice -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Maximize Your Approval Odds</h2>
+                <div class="prose max-w-none text-lg">
+                    {{ data.approval_advice | safe }}
+                </div>
+            </div>
+            <!-- FAQ -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Credit Report & Score FAQs</h2>
+                <ul class="list-disc pl-5 text-lg text-gray-700 space-y-2">
+                    {% for item in data.faq %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- Improvement Advice -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-10">
+                <h2 class="text-2xl font-extrabold section-title text-indigo-700 mb-4">Improvement Advice</h2>
+                <div class="prose max-w-none text-lg">
+                    {{ data.improvement_advice | safe }}
+                </div>
+            </div>
+            <div class="mt-10 text-center">
+                <p class="text-xs text-gray-400">Analysis powered by <span class="font-semibold text-indigo-600">GPT-4o Structured Outputs</span>. Your privacy is always protected.</p>
+            </div>
+            <div class="mt-8 flex justify-center">
+                <form method="post" action="/download">
+                    <button type="submit" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-150">Download PDF</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
