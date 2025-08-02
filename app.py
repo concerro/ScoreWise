@@ -31,7 +31,10 @@ client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
 # Stripe configuration
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-YOUR_DOMAIN = os.environ.get('APP_URL', 'http://127.0.0.1:5003')
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+YOUR_DOMAIN = os.environ.get('APP_URL', 'http://127.0.0.1:5000')
+print("Stripe Secret:", stripe.api_key[:10])
+print("Stripe Public:", STRIPE_PUBLIC_KEY[:10])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -164,8 +167,7 @@ def get_chart_image():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('upload.html')
-
+    return render_template('upload.html', stripe_public_key=STRIPE_PUBLIC_KEY)
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -291,4 +293,3 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == '--port' and len(sys.argv) > 2:
         port = int(sys.argv[2])
     app.run(host="0.0.0.0", port=port, debug=True)
-python app.py

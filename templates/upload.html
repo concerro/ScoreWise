@@ -117,24 +117,11 @@
             alert('Failed to create Stripe Checkout session.');
             return;
         }
-        const stripe = Stripe("{{ stripe_publishable_key|default('pk_test_51R7cMOQCSwJNKq1c9VaIZ0UzdRS56rUCQoLEHh75NhBi9e5JJoeXMhjmyH72eEklF9zqpw6IINvoLOCzgISc37GI00BiLKqpLh') }}");
+        // Step 3: Redirect to Stripe Checkout
+        const stripe = Stripe("{{ stripe_public_key }}");
         stripe.redirectToCheckout({ sessionId: checkoutResult.id });
     });
     </script>
-    <script src="https://js.stripe.com/v3/"></script>
-<script>
-  const stripe = Stripe("pk_test_eZQemW1FGOI3as8VJe9t0hci");
-
-  document.getElementById("checkout-button").addEventListener("click", () => {
-    fetch("/create-checkout-session", {
-      method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-      return stripe.redirectToCheckout({ sessionId: data.id });
-    });
-  });
-</script>
 
 </body>
 </html>
