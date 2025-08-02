@@ -1,9 +1,12 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg before importing pyplot
 
 from flask import Flask, render_template, request, jsonify, send_file, make_response, session, redirect, url_for
 from werkzeug.utils import secure_filename
-import os
 import PyPDF2
 from openai import OpenAI
 import json
@@ -159,8 +162,6 @@ def get_chart_image():
     img.seek(0)
     return base64.b64encode(img.getvalue()).decode()
 
-
-
 @app.route('/', methods=['GET'])
 def index():
     return render_template('upload.html')
@@ -290,3 +291,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == '--port' and len(sys.argv) > 2:
         port = int(sys.argv[2])
     app.run(host="0.0.0.0", port=port, debug=True)
+python app.py

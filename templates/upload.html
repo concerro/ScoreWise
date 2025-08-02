@@ -121,5 +121,20 @@
         stripe.redirectToCheckout({ sessionId: checkoutResult.id });
     });
     </script>
+    <script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe("pk_test_eZQemW1FGOI3as8VJe9t0hci");
+
+  document.getElementById("checkout-button").addEventListener("click", () => {
+    fetch("/create-checkout-session", {
+      method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+      return stripe.redirectToCheckout({ sessionId: data.id });
+    });
+  });
+</script>
+
 </body>
 </html>
